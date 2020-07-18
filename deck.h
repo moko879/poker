@@ -24,10 +24,10 @@ class Deck {
   virtual bool Return(const Card&) = 0;
 
   // Returns the current number of cards still in the deck.
-  virtual size_t size() const = 0;
+  virtual size_t Size() const = 0;
 
   // Returns true if the deck is empty.
-  virtual bool empty() const { return size() == 0; }
+  virtual bool Empty() const { return Size() == 0; }
 };
 
 } // namespace poker

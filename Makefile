@@ -15,7 +15,7 @@ DEPS = $(OBJS:.o=.d)
 
 CFLAGS = -std=c++17 -Wall -Wextra -g
 INCLUDES = -I /usr/local/include
-LDFLAGS = -lstdc++
+LDFLAGS = 
 GTEST_LIBS = /usr/local/lib/libgtest_main.a /usr/local/lib/libgtest.a  /usr/local/lib/libgmock.a
 
 .PHONY: clean all build test build_test
@@ -33,7 +33,7 @@ build_test: $(TEST_BINS) $(BIN_DIR)/all_test
 
 $(OBJ_DIR)/%.d: $(SRC_DIR)/%.cc
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $< -MM -MD -MP -MT $(@:.d=.o) >$@
+	$(CC) $(CFLAGS) $< -MM -MP -MT $(@:.d=.o) >$@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(OBJ_DIR)/%.d
 	@mkdir -p $(OBJ_DIR)

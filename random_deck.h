@@ -26,7 +26,7 @@ class RandomDeck : public Deck {
   // Note: Runs in O(N) time where N is the number of discarded cards.
   bool Return(const Card&) override;
 
-  size_t size() const override;
+  size_t Size() const override;
 
  private:
   size_t discarded_;

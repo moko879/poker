@@ -23,7 +23,7 @@ void RandomDeck::Shuffle() {}
 Card RandomDeck::Draw() {
   assert(discarded_ < cards_.size());
 
-  std::uniform_int_distribution<size_t> distribution(0, size());
+  std::uniform_int_distribution<size_t> distribution(0, Size());
 
   size_t index = distribution(generator_);
   std::swap(cards_[index], cards_[discarded_]);
@@ -45,7 +45,7 @@ bool RandomDeck::Return(const Card& card) {
   return false;
 }
 
-size_t RandomDeck::size() const {
+size_t RandomDeck::Size() const {
   return cards_.size() - discarded_;
 }
 

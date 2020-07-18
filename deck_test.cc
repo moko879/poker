@@ -11,7 +11,7 @@ class MockDeck : public Deck {
   void Shuffle() override {}
   Card Draw() override { return Card(Value::TWO, Suit::SPADES); }
   bool Return(const Card&) override { return false; }
-  size_t size() const override { return size_; };
+  size_t Size() const override { return size_; };
 
  private:
   size_t size_ = 0;
@@ -20,11 +20,11 @@ class MockDeck : public Deck {
 // Test the default behavior of the empty method for an empty deck.
 TEST(Deck, DefaultEmptyPositive) {
   MockDeck deck(0);
-  EXPECT_TRUE(deck.empty());
+  EXPECT_TRUE(deck.Empty());
 }
 
 // Test the default behavior of the empty method for a non-empty deck.
 TEST(Deck, DefaultEmptyNegative) {
   MockDeck deck(1);
-  EXPECT_FALSE(deck.empty());
+  EXPECT_FALSE(deck.Empty());
 }
