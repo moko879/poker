@@ -13,7 +13,7 @@ SRCS = $(shell find ${SRC_DIR} -name "*.cc")
 OBJS = $(SRCS:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 DEPS = $(OBJS:.o=.d)
 
-CFLAGS = -std=c++11 -Wall -Wextra -g
+CFLAGS = -std=c++17 -Wall -Wextra -g
 INCLUDES = -I /usr/local/include
 LDFLAGS = -lstdc++
 GTEST_LIBS = /usr/local/lib/libgtest_main.a /usr/local/lib/libgtest.a  /usr/local/lib/libgmock.a
