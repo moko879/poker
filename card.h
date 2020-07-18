@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ostream>
+#include <string_view>
+
 namespace poker {
 
 enum class Suit {
@@ -10,8 +13,7 @@ enum class Suit {
 };
 
 enum class Value {
-  LOW_ACE = 1,
-  TWO,
+  TWO = 0,
   THREE,
   FOUR,
   FIVE,
@@ -26,11 +28,26 @@ enum class Value {
   ACE,
 };
 
+// Converts a case-insensitive character to a suit.
+Suit SuitFromChar(char c);
+
+// Converts a case-insensitive character to a value.
+Value ValueFromChar(char c);
+
+// Converts a suit to a character.
+char SuitToChar(Suit s);
+
+// Converts a value to a character.
+char ValueToChar(Value v);
+
 // This is an immutable primitive class that represents a generic card.
 // TODO: generalize this further for other types of games?
 class Card {
  public:
-  Card(Value value = Value::TWO, Suit suit = Suit::CLUBS);
+  // Defaults to 2c.
+  Card();
+  Card(Value value, Suit suit);
+  Card(std::string_view str);
   
   Card(const Card&) = default;
   Card& operator=(const Card&) = default;
@@ -45,6 +62,10 @@ class Card {
   // TODO: Add ordering operators if we can settle on a semantic.
   bool operator==(const Card& card) const;
   bool operator!=(const Card& card) const;
+
+  // I/O operators.
+  Card& operator=(std::string_view str);
+  friend std::ostream& operator<<(std::ostream& out, const Card& card);
 
  private:
   Suit suit_;

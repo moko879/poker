@@ -7,7 +7,7 @@ RandomDeck::RandomDeck()
     cards_.reserve(52);
     // TODO: Figure out a way to deal with enum iteration?
     for(size_t i = 0; i < 4; ++i) {
-      for(size_t j = 2; j <= 14; ++j) {
+      for(size_t j = 0; j < 13; ++j) {
         cards_.emplace_back(static_cast<Value>(j), static_cast<Suit>(i));
       }
     }

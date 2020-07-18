@@ -18,13 +18,13 @@ class MockDeck : public Deck {
 };
 
 // Test the default behavior of the empty method for an empty deck.
-TEST(Deck, DefaultEmptyPositive) {
+TEST(DeckTest, DefaultEmptyPositive) {
   MockDeck deck(0);
   EXPECT_TRUE(deck.Empty());
 }
 
 // Test the default behavior of the empty method for a non-empty deck.
-TEST(Deck, DefaultEmptyNegative) {
+TEST(DeckTest, DefaultEmptyNegative) {
   MockDeck deck(1);
   EXPECT_FALSE(deck.Empty());
 }

@@ -3,6 +3,8 @@ SRC_DIR = .
 OBJ_DIR = .obj
 BIN_DIR = bin
 
+# TODO: Support directory structure.
+
 TEST_SRCS = $(shell find $(SRC_DIR) -name "*_test.cc")
 TEST_OBJS = $(TEST_SRCS:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 TEST_BINS = $(TEST_SRCS:$(SRC_DIR)/%.cc=$(BIN_DIR)/%)

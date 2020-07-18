@@ -5,14 +5,14 @@
 using namespace poker;
 
 // Test that we can construct a new random deck.
-TEST(Deck, Construction) {
+TEST(RandomDeckTest, Construction) {
   RandomDeck deck;
 
   EXPECT_EQ(deck.Size(), 52U);
 }
 
 // Test that we can draw a card.
-TEST(Deck, Draw) {
+TEST(RandomDeckTest, Draw) {
   RandomDeck deck;
   (void) deck.Draw();
 
@@ -20,7 +20,7 @@ TEST(Deck, Draw) {
 }
 
 // Test that we crash if we try to draw on an empty deck.
-TEST(Deck, DrawEmpty) {
+TEST(RandomDeckTest, DrawEmpty) {
   RandomDeck deck;
 
   while(!deck.Empty()) (void)deck.Draw();
@@ -31,7 +31,7 @@ TEST(Deck, DrawEmpty) {
 }
 
 // Test that we can reset a deck after drawing a card.
-TEST(Deck, Reset) {
+TEST(RandomDeckTest, Reset) {
   RandomDeck deck;
   (void) deck.Draw();
   deck.Reset();
@@ -40,7 +40,7 @@ TEST(Deck, Reset) {
 }
 
 // Test that we can reset a deck with no missing cards.
-TEST(Deck, ResetFull) {
+TEST(RandomDeckTest, ResetFull) {
   RandomDeck deck;
   deck.Reset();
 
@@ -48,7 +48,7 @@ TEST(Deck, ResetFull) {
 }
 
 // Test that we can attempt to shuffle a deck, which should do nothing.
-TEST(Deck, Shuffle) {
+TEST(RandomDeckTest, Shuffle) {
   RandomDeck deck;
   (void) deck.Draw();
   deck.Shuffle();
@@ -57,7 +57,7 @@ TEST(Deck, Shuffle) {
 }
 
 // Test that we can return a drawn card to the deck.
-TEST(Deck, ReturnPositive) {
+TEST(RandomDeckTest, ReturnPositive) {
   RandomDeck deck;
   Card card = deck.Draw();
 
@@ -67,7 +67,7 @@ TEST(Deck, ReturnPositive) {
 }
 
 // Test that we can return a drawn card to the deck.
-TEST(Deck, ReturnNegative) {
+TEST(RandomDeckTest, ReturnNegative) {
   RandomDeck deck;
   Card card(Value::JACK, Suit::HEARTS);
 
