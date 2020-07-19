@@ -13,12 +13,14 @@ SRCS = $(shell find ${SRC_DIR} -name "*.cc")
 OBJS = $(SRCS:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 DEPS = $(OBJS:.o=.d)
 
-CFLAGS = -std=c++17 -Wall -Wextra -g
+# TODO: cache the current build flags as a dependency so we rebuild everything on changes
+CFLAGS = -std=c++17 -Wall -Wextra -g $(COV_CFLAGS)
+COVFLAGS = --rc lcov_branch_coverage=1
 INCLUDES = -I /usr/local/include -I .
-LDFLAGS = 
+LDFLAGS =
 GTEST_LIBS = /usr/local/lib/libgtest_main.a /usr/local/lib/libgtest.a  /usr/local/lib/libgmock.a
 
-.PHONY: clean all build test build_test
+.PHONY: clean all build test build_test cov
 
 all: build test
 
@@ -28,6 +30,18 @@ test: build_test
 	@$(BIN_DIR)/all_test
 
 build_test: $(TEST_BINS) $(BIN_DIR)/all_test
+
+cov:
+	rm -rf coverage_report
+	lcov --zerocounters --directory . $(COVFLAGS)
+	$(MAKE) COV_CFLAGS="-coverage -g -O0" test
+	lcov --capture --directory . --base-directory . -o coverage.out $(COVFLAGS)
+	lcov --remove coverage.out "/usr/local*" -o coverage.out $(COVFLAGS)
+	lcov --remove coverage.out "*usr/include*" -o coverage.out $(COVFLAGS)
+	lcov --remove coverage.out "*_test.cc" -o coverage.out $(COVFLAGS)
+	genhtml -o coverage_report coverage.out $(COVFLAGS)
+	rm coverage.out
+	open coverage_report/index.html
 
 -include $(DEPS)
 
@@ -51,10 +65,12 @@ $(BIN_DIR)/all_test: $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
 
 clean:
-	find $(OBJ_DIR) -name '*.o' -delete
-	find $(OBJ_DIR) -name '*.d' -delete
-	find $(BIN_DIR) -name '*_test' -delete
+	find . -name '*.o' -delete
+	find . -name '*.d' -delete
+	find . -name '*.gcno' -delete
+	find . -name '*.gcda' -delete
+	find . -name '*_test' -delete
+	find . -type d -empty -delete
+	find . -type d -empty -delete
 	rm -f $(BINS)
 	# Delete directories
-	find $(OBJ_DIR) -type d -empty -delete
-	find $(BIN_DIR) -type d -empty -delete
