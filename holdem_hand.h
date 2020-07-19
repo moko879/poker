@@ -1,6 +1,6 @@
 #pragma once
 
-#include "card.h"
+#include "card/card.h"
 
 #include <vector>
 
@@ -28,7 +28,7 @@ class HoldemHand {
   ~HoldemHand() = default;
 
   // Adds a card to this hand.
-  void Add(const Card& card);
+  void Add(const card::Card& card);
 
   // Returns the size of the hand.
   size_t Size() const;
@@ -45,12 +45,12 @@ class HoldemHand {
  private:
   void Evaluate() const;
 
-  std::vector<Card> cards_;
+  std::vector<card::Card> cards_;
 
   // Cached evaluation of the hand.  Only calculated on-demand for efficiency.
   mutable bool evaluated_;
   mutable PokerHandType type_;
-  mutable std::vector<Value> tie_breakers_;
+  mutable std::vector<card::Value> tie_breakers_;
 };
 
 } // namespace poker

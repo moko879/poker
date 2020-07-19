@@ -2,6 +2,10 @@
 
 using namespace poker;
 
+using card::Card;
+using card::Suit;
+using card::Value;
+
 HoldemHand::HoldemHand::HoldemHand()
  : evaluated_(true), type_(PokerHandType::HIGH_CARD) {}
 

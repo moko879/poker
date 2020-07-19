@@ -3,7 +3,7 @@
 #include <ostream>
 #include <string_view>
 
-namespace poker {
+namespace card {
 
 enum class Suit {
   CLUBS = 0,
@@ -77,4 +77,4 @@ class Card {
   Value value_;
 };
 
-} // namespace poker
+} // namespace card

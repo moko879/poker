@@ -5,7 +5,7 @@
 
 #include <random>
 
-namespace poker {
+namespace card {
 
 // This represents a deck that always provides random cards.  These decks never need to be shuffled.
 // TODO: parameterize this by generator?
@@ -34,4 +34,4 @@ class RandomDeck : public Deck {
   std::default_random_engine generator_;
 };
 
-} // namespace poker
+} // namespace card

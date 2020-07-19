@@ -5,6 +5,10 @@
 using namespace poker;
 using namespace poker::internal;
 
+using card::Card;
+using card::Suit;
+using card::Value;
+
 void PokerHandCalculator::Add(const Card& card) {
   auto suit_result = by_suit_[static_cast<int>(card.suit())].insert(card.value());
   assert(suit_result.second);

@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace poker {
+namespace card {
 
 // This is an abstract interface defining how a deck should behave.    
 class Deck {
@@ -30,4 +30,4 @@ class Deck {
   virtual bool Empty() const { return Size() == 0; }
 };
 
-} // namespace poker
+} // namespace card

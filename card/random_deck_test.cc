@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 
-using namespace poker;
+using namespace card;
 
 // Test that we can construct a new random deck.
 TEST(RandomDeckTest, Construction) {

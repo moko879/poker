@@ -3,7 +3,7 @@
 #include <cassert>
 #include <cstring>
 
-namespace poker {
+namespace card {
 
 Card::Card()
   :  suit_(Suit::CLUBS), value_(Value::TWO) {}

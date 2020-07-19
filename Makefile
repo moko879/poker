@@ -3,8 +3,6 @@ SRC_DIR = .
 OBJ_DIR = .obj
 BIN_DIR = bin
 
-# TODO: Support directory structure.
-
 TEST_SRCS = $(shell find $(SRC_DIR) -name "*_test.cc")
 TEST_OBJS = $(TEST_SRCS:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 TEST_BINS = $(TEST_SRCS:$(SRC_DIR)/%.cc=$(BIN_DIR)/%)
@@ -34,26 +32,31 @@ build_test: $(TEST_BINS) $(BIN_DIR)/all_test
 -include $(DEPS)
 
 $(OBJ_DIR)/%.d: $(SRC_DIR)/%.cc
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $< -MM -MP -MT $(@:.d=.o) >$@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(OBJ_DIR)/%.d
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ $(LDFLAGS)
 
 # Note: if this project gets larger we may need to spell out test dependencies explicitly
 $(BIN_DIR)/%_test: $(OBJ_DIR)/%_test.o $(OBJS)
-	@mkdir -p $(BIN_DIR)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
 
 # Note: if this project gets larger it may not be efficient to merge all the tests into 1
 $(BIN_DIR)/all_test: $(OBJS)
-	@mkdir -p $(BIN_DIR)
+	@mkdir -p $(dir $@)
 	echo $(CC) $(CFLAGS) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
 	$(CC) $(CFLAGS) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
 
 clean:
-	rm -f $(OBJ_DIR)/*.o
-	rm -f $(OBJ_DIR)/*.d
-	rm -f $(BIN_DIR)/*_test
+	find $(OBJ_DIR) -name '*.o' -delete
+	find $(OBJ_DIR) -name '*.d' -delete
+	find $(BIN_DIR) -name '*_test' -delete
 	rm -f $(BINS)
+	# Delete directories
+	find $(OBJ_DIR) -type d -empty -delete
+	find $(BIN_DIR) -type d -empty -delete
+	rmdir $(OBJ_DIR)
+	rmdir $(BIN_DIR)

@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 
-using namespace poker;
+using namespace card;
 
 class MockDeck : public Deck {
  public:

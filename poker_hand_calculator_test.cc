@@ -7,6 +7,10 @@
 using namespace poker;
 using namespace poker::internal;
 
+using card::Card;
+using card::Suit;
+using card::Value;
+
 class PokerHandCalculatorTest
  : public ::testing::TestWithParam<std::tuple<std::string, std::string, PokerHandType, std::string>> {};
 

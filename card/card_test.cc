@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-using namespace poker;
+using namespace card;
 
 // Test that we can construct a new card.
 TEST(CardTest, DefaultConstruction) {

@@ -1,6 +1,6 @@
 #include "random_deck.h"
 
-using namespace poker;
+using namespace card;
 
 RandomDeck::RandomDeck()
   : discarded_(0) {
