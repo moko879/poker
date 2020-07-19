@@ -11,8 +11,22 @@ Card::Card()
 Card::Card(Value value, Suit suit)
   :  suit_(suit), value_(value) {}
 
+Card::Card(const char* str) {
+  assert(strlen(str) == 2);
+  value_ = ValueFromChar(str[0]);
+  suit_ = SuitFromChar(str[1]);
+}
+
+Card::Card(const std::string& str) {
+  assert(str.size() == 2);
+  value_ = ValueFromChar(str[0]);
+  suit_ = SuitFromChar(str[1]);
+}
+
 Card::Card(std::string_view str) {
-  *this = str;
+  assert(str.size() == 2);
+  value_ = ValueFromChar(str[0]);
+  suit_ = SuitFromChar(str[1]);
 }
 
 Value Card::value() const {
@@ -30,17 +44,18 @@ bool Card::operator!=(const Card& card) const {
   return card.value() != value() || card.suit() != suit();
 }
 
-Card& Card::operator=(std::string_view str) {
-  assert(str.size() == 2);
-  value_ = ValueFromChar(str[0]);
-  suit_ = SuitFromChar(str[1]);
- return *this;
-}
-
 std::ostream& operator<<(std::ostream& out, const Card& card) {
   return out
     << ValueToChar(card.value())
     << SuitToChar(card.suit());
+}
+
+std::ostream& operator<<(std::ostream& out, Suit s) {
+  return out << SuitToChar(s);
+}
+
+std::ostream& operator<<(std::ostream& out, Value v) {
+  return out << ValueToChar(v);
 }
 
 
@@ -60,7 +75,7 @@ Suit SuitFromChar(char c) {
       return Suit::SPADES;
     default:
       assert(false);
-      return static_cast<Suit>(-1);
+      return Suit::CLUBS;
   }
 }
 
@@ -99,7 +114,7 @@ Value ValueFromChar(char c) {
       return Value::ACE;
     default:
       assert(false);
-      return static_cast<Value>(-1);
+      return Value::TWO;
   }
 }
 

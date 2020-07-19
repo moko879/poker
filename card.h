@@ -7,9 +7,9 @@ namespace poker {
 
 enum class Suit {
   CLUBS = 0,
-  DIAMONDS = 1,
-  HEARTS = 2,
-  SPADES = 3
+  DIAMONDS,
+  HEARTS,
+  SPADES
 };
 
 enum class Value {
@@ -25,8 +25,12 @@ enum class Value {
   JACK,
   QUEEN,
   KING,
-  ACE,
+  ACE
 };
+
+// ostream enum operators.
+std::ostream& operator<<(std::ostream& out, Suit s);
+std::ostream& operator<<(std::ostream& out, Value v);
 
 // Converts a case-insensitive character to a suit.
 Suit SuitFromChar(char c);
@@ -47,6 +51,8 @@ class Card {
   // Defaults to 2c.
   Card();
   Card(Value value, Suit suit);
+  Card(const char* str);
+  Card(const std::string& str);
   Card(std::string_view str);
   
   Card(const Card&) = default;
@@ -64,7 +70,6 @@ class Card {
   bool operator!=(const Card& card) const;
 
   // I/O operators.
-  Card& operator=(std::string_view str);
   friend std::ostream& operator<<(std::ostream& out, const Card& card);
 
  private:

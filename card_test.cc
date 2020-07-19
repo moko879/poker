@@ -105,7 +105,7 @@ TEST(CardTest, StringAssignmentCrashInvalid) {
   Card card;
 
   EXPECT_DEBUG_DEATH({
-    card = "xx";
+    card = "??";
   }, ".*");
 }
 
