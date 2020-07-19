@@ -1,21 +1,22 @@
 CC = g++
 SRC_DIR = .
-OBJ_DIR = .obj
+BUILD_DIR = .build
 BIN_DIR = bin
 
 TEST_SRCS = $(shell find $(SRC_DIR) -name "*_test.cc")
-TEST_OBJS = $(TEST_SRCS:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
+TEST_OBJS = $(TEST_SRCS:$(SRC_DIR)/%.cc=$(BUILD_DIR)/%.o)
 TEST_BINS = $(TEST_SRCS:$(SRC_DIR)/%.cc=$(BIN_DIR)/%)
 
 BINS =
 
 SRCS = $(shell find ${SRC_DIR} -name "*.cc")
-OBJS = $(SRCS:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
+OBJS = $(SRCS:$(SRC_DIR)/%.cc=$(BUILD_DIR)/%.o)
 DEPS = $(OBJS:.o=.d)
 
 # TODO: cache the current build flags as a dependency so we rebuild everything on changes
 CFLAGS = -std=c++17 -Wall -Wextra -g $(COV_CFLAGS)
 COVFLAGS = --rc lcov_branch_coverage=1
+MAKEFILES = Makefile
 INCLUDES = -I /usr/local/include -I .
 LDFLAGS =
 GTEST_LIBS = /usr/local/lib/libgtest_main.a /usr/local/lib/libgtest.a  /usr/local/lib/libgmock.a
@@ -45,24 +46,23 @@ cov:
 
 -include $(DEPS)
 
-$(OBJ_DIR)/%.d: $(SRC_DIR)/%.cc
+$(BUILD_DIR)/%.d: $(SRC_DIR)/%.cc $(MAKEFILES)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) $< -MM -MP -MT $(@:.d=.o) >$@
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(OBJ_DIR)/%.d
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cc $(BUILD_DIR)/%.d $(MAKEFILES)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ $(LDFLAGS)
 
 # Note: if this project gets larger we may need to spell out test dependencies explicitly
-$(BIN_DIR)/%_test: $(OBJ_DIR)/%_test.o $(OBJS)
+$(BIN_DIR)/%_test: $(BUILD_DIR)/%_test.o $(OBJS) $(MAKEFILES)
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(filter %.o,$^)  $(GTEST_LIBS) $(LDFLAGS)
 
 # Note: if this project gets larger it may not be efficient to merge all the tests into 1
-$(BIN_DIR)/all_test: $(OBJS)
+$(BIN_DIR)/all_test: $(OBJS) $(MAKEFILES)
 	@mkdir -p $(dir $@)
-	echo $(CC) $(CFLAGS) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(filter %.o,$^)  $(GTEST_LIBS) $(LDFLAGS)
 
 clean:
 	find . -name '*.o' -delete
@@ -73,4 +73,5 @@ clean:
 	find . -type d -empty -delete
 	find . -type d -empty -delete
 	rm -f $(BINS)
+	rm -rf coverage_report
 	# Delete directories
