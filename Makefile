@@ -14,7 +14,7 @@ OBJS = $(SRCS:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 DEPS = $(OBJS:.o=.d)
 
 CFLAGS = -std=c++17 -Wall -Wextra -g
-INCLUDES = -I /usr/local/include
+INCLUDES = -I /usr/local/include -I .
 LDFLAGS = 
 GTEST_LIBS = /usr/local/lib/libgtest_main.a /usr/local/lib/libgtest.a  /usr/local/lib/libgmock.a
 
@@ -33,7 +33,7 @@ build_test: $(TEST_BINS) $(BIN_DIR)/all_test
 
 $(OBJ_DIR)/%.d: $(SRC_DIR)/%.cc
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $< -MM -MP -MT $(@:.d=.o) >$@
+	$(CC) $(CFLAGS) $(INCLUDES) $< -MM -MP -MT $(@:.d=.o) >$@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(OBJ_DIR)/%.d
 	@mkdir -p $(dir $@)
@@ -42,13 +42,13 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(OBJ_DIR)/%.d
 # Note: if this project gets larger we may need to spell out test dependencies explicitly
 $(BIN_DIR)/%_test: $(OBJ_DIR)/%_test.o $(OBJS)
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
 
 # Note: if this project gets larger it may not be efficient to merge all the tests into 1
 $(BIN_DIR)/all_test: $(OBJS)
 	@mkdir -p $(dir $@)
 	echo $(CC) $(CFLAGS) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
-	$(CC) $(CFLAGS) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^  $(GTEST_LIBS) $(LDFLAGS)
 
 clean:
 	find $(OBJ_DIR) -name '*.o' -delete
@@ -58,5 +58,3 @@ clean:
 	# Delete directories
 	find $(OBJ_DIR) -type d -empty -delete
 	find $(BIN_DIR) -type d -empty -delete
-	rmdir $(OBJ_DIR)
-	rmdir $(BIN_DIR)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "card/card.h"
-#include "poker_hand_type.h"
+#include "poker/poker_hand_type.h"
 
 #include <array>
 #include <set>
