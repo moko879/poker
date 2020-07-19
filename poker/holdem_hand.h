@@ -1,22 +1,12 @@
 #pragma once
 
 #include "card/card.h"
+#include "poker/internal/poker_hand_calculator.h"
+#include "poker/poker_hand_type.h"
 
 #include <vector>
 
 namespace poker {
-
-enum class PokerHandType {
-  HIGH_CARD,
-  PAIR,
-  TWO_PAIR,
-  THREE_OF_A_KIND,
-  STRAIGHT,
-  FLUSH,
-  FULLHOUSE,
-  FOUR_OF_A_KIND,
-  STRAIGHT_FLUSH
-};
 
 // A poker hand compatible with any holdem-like game.  Cards can only ever be added
 // to the hand, and the highest possible hand is used for comparisons.
@@ -43,14 +33,8 @@ class HoldemHand {
   bool operator!=(const HoldemHand& hand) const;
 
  private:
-  void Evaluate() const;
-
   std::vector<card::Card> cards_;
-
-  // Cached evaluation of the hand.  Only calculated on-demand for efficiency.
-  mutable bool evaluated_;
-  mutable PokerHandType type_;
-  mutable std::vector<card::Value> tie_breakers_;
+  internal::PokerHandCalculator calculator_;
 };
 
 } // namespace poker

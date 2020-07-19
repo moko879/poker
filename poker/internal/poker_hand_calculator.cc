@@ -10,6 +10,7 @@ using card::Suit;
 using card::Value;
 
 void PokerHandCalculator::Add(const Card& card) {
+  cached_.reset();
   auto suit_result = by_suit_[static_cast<int>(card.suit())].insert(card.value());
   assert(suit_result.second);
   
@@ -17,6 +18,7 @@ void PokerHandCalculator::Add(const Card& card) {
   assert(value_result.second);
 }
 void PokerHandCalculator::Remove(const Card& card) {
+  cached_.reset();
   auto suit_result = by_suit_[static_cast<int>(card.suit())].erase(card.value());
   assert(suit_result == 1);
 
@@ -24,40 +26,64 @@ void PokerHandCalculator::Remove(const Card& card) {
   assert(value_result == 1);
 }
 
-PokerHandType PokerHandCalculator::Calculate(std::list<Value>& tie_breakers) const {
-  PokerHandCalculator::Result result;
-  if(result = HasStraightFlush(); result.value) {
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::STRAIGHT_FLUSH;
-  } else if(result = HasFourOfAKind(); result.value) {
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::FOUR_OF_A_KIND;
-  } else if(result = HasFullHouse(); result.value) {
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::FULL_HOUSE;
-  } else if(result = HasFlush(); result.value) {
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::FLUSH;
-  } else if(result = HasStraight(); result.value) {
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::STRAIGHT;
-  } else if(result = HasThreeOfAKind(); result.value) {
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::THREE_OF_A_KIND;
-  } else if(result = HasTwoPair(); result.value) {
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::TWO_PAIR;
-  } else if(result = HasPair(); result.value) {
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::PAIR;
-  } else {
-    result = CheckHighCard();
-    tie_breakers = std::move(result.tie_breakers);
-    return PokerHandType::HIGH_CARD; 
+const PokerHandCalculator::Result& PokerHandCalculator::GetResult() const {
+  if(cached_) {
+    return *cached_;
   }
+
+  TypeResult type_result;
+  if(type_result = HasStraightFlush(); type_result.value) {
+    cached_ = {
+      .type = PokerHandType::STRAIGHT_FLUSH,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  } else if(type_result = HasFourOfAKind(); type_result.value) {
+    cached_ = {
+      .type = PokerHandType::FOUR_OF_A_KIND,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  } else if(type_result = HasFullHouse(); type_result.value) {
+    cached_ = {
+      .type = PokerHandType::FULL_HOUSE,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  } else if(type_result = HasFlush(); type_result.value) {
+    cached_ = {
+      .type = PokerHandType::FLUSH,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  } else if(type_result = HasStraight(); type_result.value) {
+    cached_ = {
+      .type = PokerHandType::STRAIGHT,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  } else if(type_result = HasThreeOfAKind(); type_result.value) {
+    cached_ = {
+      .type = PokerHandType::THREE_OF_A_KIND,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  } else if(type_result = HasTwoPair(); type_result.value) {
+    cached_ = {
+      .type = PokerHandType::TWO_PAIR,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  } else if(type_result = HasPair(); type_result.value) {
+    cached_ = {
+      .type = PokerHandType::PAIR,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  } else {
+    type_result = HasHighCard();
+    cached_ = {
+      .type = PokerHandType::HIGH_CARD,
+      .tie_breakers = std::move(type_result.tie_breakers)
+    };
+  }
+
+  return *cached_;
 }
 
-PokerHandCalculator::Result PokerHandCalculator::HasStraightFlush() const {
+PokerHandCalculator::TypeResult PokerHandCalculator::HasStraightFlush() const {
   int best_high_card = -1;
   for(int i = 0; i < 4; ++i) {
     if(by_suit_[i].size() < 5) continue;
@@ -98,8 +124,8 @@ PokerHandCalculator::Result PokerHandCalculator::HasStraightFlush() const {
     .tie_breakers = { static_cast<Value>(best_high_card) }
   };
 }
-PokerHandCalculator::Result PokerHandCalculator::HasFourOfAKind() const {
-  Result result;
+PokerHandCalculator::TypeResult PokerHandCalculator::HasFourOfAKind() const {
+  TypeResult result;
   std::optional<Value> primary = std::nullopt;
   std::optional<Value> secondary = std::nullopt;
   for(int i = 12; i >= 0; --i) {
@@ -120,8 +146,8 @@ PokerHandCalculator::Result PokerHandCalculator::HasFourOfAKind() const {
   result.value = true;
   return result;
 }
-PokerHandCalculator::Result PokerHandCalculator::HasFullHouse() const {
-  Result result;
+PokerHandCalculator::TypeResult PokerHandCalculator::HasFullHouse() const {
+  TypeResult result;
   std::optional<Value> primary = std::nullopt;
   std::optional<Value> secondary = std::nullopt;
   for(int i = 12; i >= 0; --i) {
@@ -140,8 +166,8 @@ PokerHandCalculator::Result PokerHandCalculator::HasFullHouse() const {
   result.value = true;
   return result;
 }
-PokerHandCalculator::Result PokerHandCalculator::HasFlush() const {
-  Result result;
+PokerHandCalculator::TypeResult PokerHandCalculator::HasFlush() const {
+  TypeResult result;
   for(int i = 0; i < 4; ++i) {
     if(by_suit_[i].size() < 5) continue;
 
@@ -158,7 +184,7 @@ PokerHandCalculator::Result PokerHandCalculator::HasFlush() const {
 
   return result;
 }
-PokerHandCalculator::Result PokerHandCalculator::HasStraight() const {
+PokerHandCalculator::TypeResult PokerHandCalculator::HasStraight() const {
   int high_card = 12;
   int size = 0;
   for(int i = 12; i >= 0; --i) {
@@ -185,8 +211,8 @@ PokerHandCalculator::Result PokerHandCalculator::HasStraight() const {
     .tie_breakers = { static_cast<Value>(high_card) }
   };
 }
-PokerHandCalculator::Result PokerHandCalculator::HasThreeOfAKind() const {
-  Result result;
+PokerHandCalculator::TypeResult PokerHandCalculator::HasThreeOfAKind() const {
+  TypeResult result;
   std::optional<Value> primary = std::nullopt;
   std::optional<Value> secondary = std::nullopt;
   std::optional<Value> tertiary = std::nullopt;
@@ -216,8 +242,8 @@ PokerHandCalculator::Result PokerHandCalculator::HasThreeOfAKind() const {
   result.value = true;
   return result;
 }
-PokerHandCalculator::Result PokerHandCalculator::HasTwoPair() const {
-  Result result;
+PokerHandCalculator::TypeResult PokerHandCalculator::HasTwoPair() const {
+  TypeResult result;
   std::optional<Value> high_pair = std::nullopt;
   std::optional<Value> low_pair = std::nullopt;
   std::optional<Value> high_card = std::nullopt;
@@ -243,8 +269,8 @@ PokerHandCalculator::Result PokerHandCalculator::HasTwoPair() const {
   result.value = true;
   return result;
 }
-PokerHandCalculator::Result PokerHandCalculator::HasPair() const {
-  Result result;
+PokerHandCalculator::TypeResult PokerHandCalculator::HasPair() const {
+  TypeResult result;
   std::optional<Value> pair = std::nullopt;
   for(int i = 12; i >= 0; --i) {
     if(!pair && by_value_[i].size() == 2) {
@@ -263,8 +289,8 @@ PokerHandCalculator::Result PokerHandCalculator::HasPair() const {
   result.value = true;
   return result;
 }
-PokerHandCalculator::Result PokerHandCalculator::CheckHighCard() const {
-  Result result;
+PokerHandCalculator::TypeResult PokerHandCalculator::HasHighCard() const {
+  TypeResult result;
   for(int i = 12; i >= 0; --i) {
     if(result.tie_breakers.size() >= 5) break;
 

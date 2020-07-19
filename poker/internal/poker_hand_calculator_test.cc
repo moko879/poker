@@ -27,10 +27,11 @@ TEST_P(PokerHandCalculatorTest, Check) {
 
   std::list<Value> tie_breakers;
 
-  EXPECT_EQ(calc.Calculate(tie_breakers), type_exp);
-  ASSERT_EQ(tie_breakers.size(), tie_breakers_exp.size());
+  auto result = calc.GetResult();
+  EXPECT_EQ(result.type, type_exp);
+  ASSERT_EQ(result.tie_breakers.size(), tie_breakers_exp.size());
 
-  auto itr = tie_breakers.begin();
+  auto itr = result.tie_breakers.begin();
   for(size_t i = 0; i < tie_breakers_exp.size(); ++i, ++itr) {
     EXPECT_EQ(ValueToChar(*itr), tie_breakers_exp[i]);
   }
@@ -102,3 +103,25 @@ INSTANTIATE_TEST_SUITE_P(
         [](const ::testing::TestParamInfo<PokerHandCalculatorTest::ParamType>& info) {
           return std::get<0>(info.param);
         });
+
+// TODO: add tests for add/remove separately?
+
+// Check that result caching works seamlessly.
+TEST(PokerHandCalculatorTest, IncrementalChanges) {
+  PokerHandCalculator calc;
+
+  EXPECT_EQ(calc.GetResult().type, PokerHandType::HIGH_CARD);
+
+  calc.Add("Ah");
+  EXPECT_EQ(calc.GetResult().type, PokerHandType::HIGH_CARD);
+
+  calc.Add("Ad");
+  EXPECT_EQ(calc.GetResult().type, PokerHandType::PAIR);
+
+  calc.Add("Ac");
+  EXPECT_EQ(calc.GetResult().type, PokerHandType::THREE_OF_A_KIND);
+  EXPECT_EQ(calc.GetResult().type, PokerHandType::THREE_OF_A_KIND);
+
+  calc.Remove("Ah");
+  EXPECT_EQ(calc.GetResult().type, PokerHandType::PAIR);
+}

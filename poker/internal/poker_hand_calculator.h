@@ -6,6 +6,7 @@
 #include <array>
 #include <set>
 #include <list>
+#include <optional>
 
 namespace poker {
 namespace internal {
@@ -16,26 +17,32 @@ class PokerHandCalculator {
   void Add(const card::Card& card);
   void Remove(const card::Card& card);
 
-  PokerHandType Calculate(std::list<card::Value>& tie_breakers) const;
+  struct Result {
+    PokerHandType type;
+    std::list<card::Value> tie_breakers;
+  };
+
+  const Result& GetResult() const;
 
  private:
-  struct Result {
+  struct TypeResult {
     bool value = false;
     std::list<card::Value> tie_breakers;
   };
 
-  Result HasStraightFlush() const;
-  Result HasFourOfAKind() const;
-  Result HasFullHouse() const;
-  Result HasFlush() const;
-  Result HasStraight() const;
-  Result HasThreeOfAKind() const;
-  Result HasTwoPair() const;
-  Result HasPair() const;
-  Result CheckHighCard() const;
+  TypeResult HasStraightFlush() const;
+  TypeResult HasFourOfAKind() const;
+  TypeResult HasFullHouse() const;
+  TypeResult HasFlush() const;
+  TypeResult HasStraight() const;
+  TypeResult HasThreeOfAKind() const;
+  TypeResult HasTwoPair() const;
+  TypeResult HasPair() const;
+  TypeResult HasHighCard() const;
 
   std::array<std::set<card::Value>, 4> by_suit_;
   std::array<std::set<card::Suit>, 13> by_value_;
+  mutable std::optional<Result> cached_;
 };
 
 } // namespace internal
