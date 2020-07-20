@@ -18,7 +18,7 @@ CFLAGS = -std=c++17 -Wall -Wextra -g $(COV_CFLAGS)
 COVFLAGS = --rc lcov_branch_coverage=1
 MAKEFILES = Makefile
 INCLUDES = -I /usr/local/include -I .
-LDFLAGS =
+LDFLAGS = -fprofile-arcs
 GTEST_LIBS = /usr/local/lib/libgtest_main.a /usr/local/lib/libgtest.a  /usr/local/lib/libgmock.a
 
 .PHONY: clean all build test build_test cov
@@ -35,7 +35,7 @@ build_test: $(TEST_BINS) $(BIN_DIR)/all_test
 cov:
 	rm -rf coverage_report
 	lcov --zerocounters --directory . $(COVFLAGS)
-	$(MAKE) COV_CFLAGS="-coverage -g -O0" test
+	$(MAKE) COV_CFLAGS="-coverage -g -O3 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-exceptions -fno-inline" test
 	lcov --capture --directory . --base-directory . -o coverage.out $(COVFLAGS)
 	lcov --remove coverage.out "/usr/local*" -o coverage.out $(COVFLAGS)
 	lcov --remove coverage.out "*usr/include*" -o coverage.out $(COVFLAGS)

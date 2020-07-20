@@ -1,6 +1,6 @@
 #include "card.h"
+#include "util/assert.h"
 
-#include <cassert>
 #include <cstring>
 
 namespace card {
@@ -12,19 +12,19 @@ Card::Card(Value value, Suit suit)
   :  suit_(suit), value_(value) {}
 
 Card::Card(const char* str) {
-  assert(strlen(str) == 2);
+  CHECK(strlen(str) == 2);
   value_ = ValueFromChar(str[0]);
   suit_ = SuitFromChar(str[1]);
 }
 
 Card::Card(const std::string& str) {
-  assert(str.size() == 2);
+  CHECK(str.size() == 2);
   value_ = ValueFromChar(str[0]);
   suit_ = SuitFromChar(str[1]);
 }
 
 Card::Card(std::string_view str) {
-  assert(str.size() == 2);
+  CHECK(str.size() == 2);
   value_ = ValueFromChar(str[0]);
   suit_ = SuitFromChar(str[1]);
 }
@@ -74,7 +74,7 @@ Suit SuitFromChar(char c) {
     case 'S':
       return Suit::SPADES;
     default:
-      assert(false);
+      CHECK(false);
       return Suit::CLUBS;
   }
 }
@@ -113,7 +113,7 @@ Value ValueFromChar(char c) {
     case 'A':
       return Value::ACE;
     default:
-      assert(false);
+      CHECK(false);
       return Value::TWO;
   }
 }

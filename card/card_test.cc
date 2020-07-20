@@ -38,6 +38,14 @@ TEST(CardTest, StringConstruction) {
   EXPECT_EQ(card.value(), Value::NINE);
 }
 
+// Test that we can construct a new card from a string_view.
+TEST(CardTest, StringViewConstruction) {
+  Card card(std::string_view("5c"));
+
+  EXPECT_EQ(card.suit(), Suit::CLUBS);
+  EXPECT_EQ(card.value(), Value::FIVE);
+}
+
 // Test that we can copy construct a new card.
 TEST(CardTest, CopyConstruction) {
   Card card_orig(Value::THREE, Suit::SPADES);
@@ -153,4 +161,85 @@ TEST(CardTest, StreamOutput) {
   EXPECT_EQ(sstream.str(), "Ah");
 }
 
-// TODO: Test to/from string conversions.
+// Test that we can convert suits to characters.
+TEST(SuitTest, SuitToChar) {
+  EXPECT_EQ(SuitToChar(Suit::CLUBS), 'c');
+  EXPECT_EQ(SuitToChar(Suit::DIAMONDS), 'd');
+  EXPECT_EQ(SuitToChar(Suit::HEARTS), 'h');
+  EXPECT_EQ(SuitToChar(Suit::SPADES), 's');
+}
+
+// Test that we can convert characters to suits.
+TEST(SuitTest, SuitFromChar) {
+  EXPECT_EQ(SuitFromChar('c'), Suit::CLUBS);
+  EXPECT_EQ(SuitFromChar('C'), Suit::CLUBS);
+  EXPECT_EQ(SuitFromChar('d'), Suit::DIAMONDS);
+  EXPECT_EQ(SuitFromChar('D'), Suit::DIAMONDS);
+  EXPECT_EQ(SuitFromChar('h'), Suit::HEARTS);
+  EXPECT_EQ(SuitFromChar('H'), Suit::HEARTS);
+  EXPECT_EQ(SuitFromChar('s'), Suit::SPADES);
+  EXPECT_EQ(SuitFromChar('S'), Suit::SPADES);
+
+  EXPECT_DEBUG_DEATH({
+    (void)SuitFromChar('?');
+  }, ".*");
+}
+
+// Test that we can output a suit to an output stream.
+TEST(SuitTest, StreamOutput) {
+  std::ostringstream sstream;
+  sstream << Suit::SPADES;
+
+  EXPECT_EQ(sstream.str(), "s");
+}
+
+// Test that we can convert values to characters.
+TEST(ValueTest, ValueToChar) {
+  EXPECT_EQ(ValueToChar(Value::TWO), '2');
+  EXPECT_EQ(ValueToChar(Value::THREE), '3');
+  EXPECT_EQ(ValueToChar(Value::FOUR), '4');
+  EXPECT_EQ(ValueToChar(Value::FIVE), '5');
+  EXPECT_EQ(ValueToChar(Value::SIX), '6');
+  EXPECT_EQ(ValueToChar(Value::SEVEN), '7');
+  EXPECT_EQ(ValueToChar(Value::EIGHT), '8');
+  EXPECT_EQ(ValueToChar(Value::NINE), '9');
+  EXPECT_EQ(ValueToChar(Value::TEN), 'T');
+  EXPECT_EQ(ValueToChar(Value::JACK), 'J');
+  EXPECT_EQ(ValueToChar(Value::QUEEN), 'Q');
+  EXPECT_EQ(ValueToChar(Value::KING), 'K');
+  EXPECT_EQ(ValueToChar(Value::ACE), 'A');
+}
+
+// Test that we can convert characters to values.
+TEST(ValueTest, ValueFromChar) {
+  EXPECT_EQ(ValueFromChar('2'), Value::TWO);
+  EXPECT_EQ(ValueFromChar('3'), Value::THREE);
+  EXPECT_EQ(ValueFromChar('4'), Value::FOUR);
+  EXPECT_EQ(ValueFromChar('5'), Value::FIVE);
+  EXPECT_EQ(ValueFromChar('6'), Value::SIX);
+  EXPECT_EQ(ValueFromChar('7'), Value::SEVEN);
+  EXPECT_EQ(ValueFromChar('8'), Value::EIGHT);
+  EXPECT_EQ(ValueFromChar('9'), Value::NINE);
+  EXPECT_EQ(ValueFromChar('T'), Value::TEN);
+  EXPECT_EQ(ValueFromChar('t'), Value::TEN);
+  EXPECT_EQ(ValueFromChar('J'), Value::JACK);
+  EXPECT_EQ(ValueFromChar('j'), Value::JACK);
+  EXPECT_EQ(ValueFromChar('Q'), Value::QUEEN);
+  EXPECT_EQ(ValueFromChar('q'), Value::QUEEN);
+  EXPECT_EQ(ValueFromChar('K'), Value::KING);
+  EXPECT_EQ(ValueFromChar('k'), Value::KING);
+  EXPECT_EQ(ValueFromChar('A'), Value::ACE);
+  EXPECT_EQ(ValueFromChar('a'), Value::ACE);
+
+  EXPECT_DEBUG_DEATH({
+    (void)ValueFromChar('?');
+  }, ".*");
+}
+
+// Test that we can output a suit to an output stream.
+TEST(ValueTest, StreamOutput) {
+  std::ostringstream sstream;
+  sstream << Value::JACK;
+
+  EXPECT_EQ(sstream.str(), "J");
+}

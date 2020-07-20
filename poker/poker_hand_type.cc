@@ -5,37 +5,24 @@ namespace poker {
 std::ostream& operator<<(std::ostream& out, const PokerHandType& s) {
   switch(s) {
     case PokerHandType::HIGH_CARD:
-      out << "HIGH_CARD";
-      break;
+      return out << "HIGH_CARD";
     case PokerHandType::PAIR:
-      out << "PAIR";
-      break;
+      return out << "PAIR";
     case PokerHandType::TWO_PAIR:
-      out << "TWO_PAIR";
-      break;
+      return out << "TWO_PAIR";
     case PokerHandType::THREE_OF_A_KIND:
-      out << "THREE_OF_A_KIND";
-      break;
+      return out << "THREE_OF_A_KIND";
     case PokerHandType::STRAIGHT:
-      out << "STRAIGHT";
-      break;
+      return out << "STRAIGHT";
     case PokerHandType::FLUSH:
-      out << "FLUSH";
-      break;
+      return out << "FLUSH";
     case PokerHandType::FULL_HOUSE:
-      out << "FULL_HOUSE";
-      break;
+      return out << "FULL_HOUSE";
     case PokerHandType::FOUR_OF_A_KIND:
-      out << "FOUR_OF_A_KIND";
-      break;
+      return out << "FOUR_OF_A_KIND";
     case PokerHandType::STRAIGHT_FLUSH:
-      out << "STRAIGHT_FLUSH";
-      break;
-    default:
-      out << "???";
-      break;
+      return out << "STRAIGHT_FLUSH";
   }
-  return out;
 }
 
 }

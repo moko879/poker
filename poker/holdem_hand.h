@@ -5,6 +5,7 @@
 #include "poker/poker_hand_type.h"
 
 #include <vector>
+#include <string_view>
 
 namespace poker {
 
@@ -12,19 +13,26 @@ namespace poker {
 // to the hand, and the highest possible hand is used for comparisons.
 class HoldemHand {
  public:
-  HoldemHand();
-  HoldemHand(const HoldemHand&) = default;
-  HoldemHand(HoldemHand&&) = default;
+  HoldemHand(const std::pair<card::Card, card::Card>& pocket);
+  HoldemHand(const char* str);
+  HoldemHand(const std::string& str);
+  HoldemHand(std::string_view str);
+
+  HoldemHand(const HoldemHand&) = delete;
+  HoldemHand(HoldemHand&&) = delete;
   ~HoldemHand() = default;
 
   // Adds a card to this hand.
-  void Add(const card::Card& card);
-
-  // Returns the size of the hand.
-  size_t Size() const;
+  void AddBoardCard(const card::Card& card);
 
   // Returns the current type of the hand.
-  PokerHandType Type() const;
+  PokerHandType GetType() const;
+
+  // Returns the classification of the pocket cards.
+  std::string PocketString() const;
+
+  // Returns a string representing the detailed pocket cards.
+  std::string DetailedPocketString() const;
 
   // Comparison operators.
   bool operator<(const HoldemHand& hand) const;
@@ -32,9 +40,14 @@ class HoldemHand {
   bool operator==(const HoldemHand& hand) const;
   bool operator!=(const HoldemHand& hand) const;
 
+  // I/O operators.
+  friend std::ostream& operator<<(std::ostream& out, const HoldemHand& hand);
+
  private:
-  std::vector<card::Card> cards_;
+  std::pair<card::Card, card::Card> pocket_;
   internal::PokerHandCalculator calculator_;
+
+  void Initialize(const std::pair<card::Card, card::Card>& pocket);
 };
 
 } // namespace poker

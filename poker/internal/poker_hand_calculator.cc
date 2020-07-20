@@ -1,5 +1,7 @@
 #include "poker_hand_calculator.h"
 
+#include "util/assert.h"
+
 #include <optional>
 
 using namespace poker;
@@ -11,19 +13,17 @@ using card::Value;
 
 void PokerHandCalculator::Add(const Card& card) {
   cached_.reset();
-  auto suit_result = by_suit_[static_cast<int>(card.suit())].insert(card.value());
-  assert(suit_result.second);
-  
+  auto suit_result = by_suit_[static_cast<int>(card.suit())].insert(card.value());  
   auto value_result = by_value_[static_cast<int>(card.value())].insert(card.suit());
-  assert(value_result.second);
+
+  CHECK(suit_result.second && value_result.second);
 }
 void PokerHandCalculator::Remove(const Card& card) {
   cached_.reset();
   auto suit_result = by_suit_[static_cast<int>(card.suit())].erase(card.value());
-  assert(suit_result == 1);
-
   auto value_result = by_value_[static_cast<int>(card.value())].erase(card.suit());
-  assert(value_result == 1);
+
+  CHECK(suit_result == 1 && value_result == 1);
 }
 
 const PokerHandCalculator::Result& PokerHandCalculator::GetResult() const {
@@ -31,55 +31,83 @@ const PokerHandCalculator::Result& PokerHandCalculator::GetResult() const {
     return *cached_;
   }
 
-  TypeResult type_result;
-  if(type_result = HasStraightFlush(); type_result.value) {
+  TypeResult type_result = HasStraightFlush();
+  if(type_result.value) {
     cached_ = {
       .type = PokerHandType::STRAIGHT_FLUSH,
       .tie_breakers = std::move(type_result.tie_breakers)
     };
-  } else if(type_result = HasFourOfAKind(); type_result.value) {
+    return *cached_;    
+  }
+
+  type_result = HasFourOfAKind();
+  if(type_result.value) {
     cached_ = {
       .type = PokerHandType::FOUR_OF_A_KIND,
       .tie_breakers = std::move(type_result.tie_breakers)
     };
-  } else if(type_result = HasFullHouse(); type_result.value) {
+    return *cached_;    
+  }
+
+  type_result = HasFullHouse();
+  if(type_result.value) {
     cached_ = {
       .type = PokerHandType::FULL_HOUSE,
       .tie_breakers = std::move(type_result.tie_breakers)
     };
-  } else if(type_result = HasFlush(); type_result.value) {
+    return *cached_;    
+  }
+  
+  type_result = HasFlush();
+  if(type_result.value) {
     cached_ = {
       .type = PokerHandType::FLUSH,
       .tie_breakers = std::move(type_result.tie_breakers)
     };
-  } else if(type_result = HasStraight(); type_result.value) {
+    return *cached_;    
+  }
+  
+  type_result = HasStraight();
+  if(type_result.value) {
     cached_ = {
       .type = PokerHandType::STRAIGHT,
       .tie_breakers = std::move(type_result.tie_breakers)
     };
-  } else if(type_result = HasThreeOfAKind(); type_result.value) {
+    return *cached_;    
+  }
+  
+  type_result = HasThreeOfAKind();
+  if(type_result.value) {
     cached_ = {
       .type = PokerHandType::THREE_OF_A_KIND,
       .tie_breakers = std::move(type_result.tie_breakers)
     };
-  } else if(type_result = HasTwoPair(); type_result.value) {
+    return *cached_;    
+  }
+  
+  type_result = HasTwoPair();
+  if(type_result.value) {
     cached_ = {
       .type = PokerHandType::TWO_PAIR,
       .tie_breakers = std::move(type_result.tie_breakers)
     };
-  } else if(type_result = HasPair(); type_result.value) {
+    return *cached_;    
+  }
+  
+  type_result = HasPair();
+  if(type_result.value) {
     cached_ = {
       .type = PokerHandType::PAIR,
       .tie_breakers = std::move(type_result.tie_breakers)
     };
-  } else {
-    type_result = HasHighCard();
-    cached_ = {
-      .type = PokerHandType::HIGH_CARD,
-      .tie_breakers = std::move(type_result.tie_breakers)
-    };
+    return *cached_;    
   }
-
+  
+  type_result = HasHighCard();
+  cached_ = {
+    .type = PokerHandType::HIGH_CARD,
+    .tie_breakers = std::move(type_result.tie_breakers)
+  };
   return *cached_;
 }
 

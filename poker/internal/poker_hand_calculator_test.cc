@@ -125,3 +125,22 @@ TEST(PokerHandCalculatorTest, IncrementalChanges) {
   calc.Remove("Ah");
   EXPECT_EQ(calc.GetResult().type, PokerHandType::PAIR);
 }
+
+// Check that we assert if the same card is added twice.
+TEST(PokerHandCalculatorTest, AddDuplicate) {
+  PokerHandCalculator calc;
+
+  calc.Add("Ah");
+  EXPECT_DEBUG_DEATH({
+    calc.Add("Ah");    
+  }, ".*");
+}
+
+// Check that we assert if a non-existent card is removed.
+TEST(PokerHandCalculatorTest, RemoveNonexistent) {
+  PokerHandCalculator calc;
+
+  EXPECT_DEBUG_DEATH({
+    calc.Remove("Ah");    
+  }, ".*");
+}

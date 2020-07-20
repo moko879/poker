@@ -75,3 +75,15 @@ TEST(RandomDeckTest, ReturnNegative) {
   EXPECT_FALSE(deck.Return(card));
   EXPECT_EQ(deck.Size(), 52U);
 }
+
+// Test that we can return two drawn cards to the deck.
+TEST(RandomDeckTest, ReturnMultiple) {
+  RandomDeck deck;
+  Card card1 = deck.Draw();
+  Card card2 = deck.Draw();
+
+  ASSERT_EQ(deck.Size(), 50U);
+  EXPECT_TRUE(deck.Return(card1));
+  EXPECT_TRUE(deck.Return(card2));
+  EXPECT_EQ(deck.Size(), 52U);
+}

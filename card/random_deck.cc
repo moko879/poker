@@ -1,5 +1,7 @@
 #include "random_deck.h"
 
+#include "util/assert.h"
+
 using namespace card;
 
 RandomDeck::RandomDeck()
@@ -21,7 +23,7 @@ void RandomDeck::Shuffle() {}
 
 // Draws a random card remaining in the deck.
 Card RandomDeck::Draw() {
-  assert(discarded_ < cards_.size());
+  CHECK(discarded_ < cards_.size());
 
   std::uniform_int_distribution<size_t> distribution(0, Size());
 
@@ -32,14 +34,14 @@ Card RandomDeck::Draw() {
 }
 
 bool RandomDeck::Return(const Card& card) {
-  assert(discarded_ <= cards_.size());
+  CHECK(discarded_ <= cards_.size());
 
   for(size_t i = 0; i < discarded_; ++i) {
-    if(cards_[i] == card) {
-      std::swap(cards_[i], cards_[discarded_ - 1]);
-      --discarded_;
-      return true;
-    }
+    if(cards_[i] != card) continue;
+
+    std::swap(cards_[i], cards_[discarded_ - 1]);
+    --discarded_;
+    return true;
   }
 
   return false;
