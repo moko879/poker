@@ -37,6 +37,27 @@ TEST(HoldemHandTest, ConstructStringView) {
   EXPECT_EQ(hand.DetailedPocketString(), "5d5s");
 }
 
+// Test that we assert with invalid strings.
+TEST(HoldemHandTest, ConstructorCrashString) {
+  EXPECT_DEBUG_DEATH({
+    HoldemHand hand(std::string("3h3c4d"));
+  }, ".*");
+}
+
+// Test that we assert with invalid c-style strings.
+TEST(HoldemHandTest, ConstructorCrashCString) {
+  EXPECT_DEBUG_DEATH({
+    HoldemHand hand("3h3c4d");
+  }, ".*");
+}
+
+// Test that we assert with invalid string views.
+TEST(HoldemHandTest, ConstructorCrashStringView) {
+  EXPECT_DEBUG_DEATH({
+    HoldemHand hand(std::string_view("3h3c4d"));
+  }, ".*");
+}
+
 // Test the info we provide for a pocket pair.
 TEST(HoldemHandTest, InfoPocketPair) {
   HoldemHand hand("AhAs");
@@ -126,6 +147,16 @@ TEST_P(HoldemHandDifferentTest, LessThanEqual) {
 // Test the not equals operator.
 TEST_P(HoldemHandDifferentTest, NotEqual) {
   EXPECT_NE(hand1_, hand2_);
+}
+
+// Test the greater than operator.
+TEST_P(HoldemHandDifferentTest, GreaterThan) {
+  EXPECT_FALSE(hand1_ > hand2_);
+}
+
+// Test the greater than or equal to operator.
+TEST_P(HoldemHandDifferentTest, GreaterThanEqual) {
+  EXPECT_FALSE(hand1_ >= hand2_);
 }
 
 INSTANTIATE_TEST_SUITE_P(

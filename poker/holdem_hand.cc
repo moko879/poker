@@ -72,6 +72,12 @@ bool HoldemHand::operator<(const HoldemHand& hand) const {
 bool HoldemHand::operator<=(const HoldemHand& hand) const {
   return *this == hand || *this < hand;
 }
+bool HoldemHand::operator>(const HoldemHand& hand) const {
+  return (hand < *this);
+}
+bool HoldemHand::operator>=(const HoldemHand& hand) const {
+  return (hand <= *this);
+}
 bool HoldemHand::operator==(const HoldemHand& hand) const {
   return GetType() == hand.GetType() && calculator_.GetResult().tie_breakers == hand.calculator_.GetResult().tie_breakers;
 }

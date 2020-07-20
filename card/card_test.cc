@@ -46,6 +46,27 @@ TEST(CardTest, StringViewConstruction) {
   EXPECT_EQ(card.value(), Value::FIVE);
 }
 
+// Test that we assert for invalid length c-style strings.
+TEST(CardTest, ConstructionCrashWrongCStringSize) {
+  EXPECT_DEBUG_DEATH({
+    Card card("");
+  }, ".*");
+}
+
+// Test that we assert for invalid length strings.
+TEST(CardTest, ConstructionCrashWrongStringSize) {
+  EXPECT_DEBUG_DEATH({
+    Card card(std::string(""));
+  }, ".*");
+}
+
+// Test that we assert for invalid length string views.
+TEST(CardTest, ConstructionCrashWrongStringViewSize) {
+  EXPECT_DEBUG_DEATH({
+    Card card(std::string_view(""));
+  }, ".*");
+}
+
 // Test that we can copy construct a new card.
 TEST(CardTest, CopyConstruction) {
   Card card_orig(Value::THREE, Suit::SPADES);

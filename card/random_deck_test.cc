@@ -83,7 +83,7 @@ TEST(RandomDeckTest, ReturnMultiple) {
   Card card2 = deck.Draw();
 
   ASSERT_EQ(deck.Size(), 50U);
-  EXPECT_TRUE(deck.Return(card1));
   EXPECT_TRUE(deck.Return(card2));
+  EXPECT_TRUE(deck.Return(card1));
   EXPECT_EQ(deck.Size(), 52U);
 }

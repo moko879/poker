@@ -37,6 +37,8 @@ class HoldemHand {
   // Comparison operators.
   bool operator<(const HoldemHand& hand) const;
   bool operator<=(const HoldemHand& hand) const;
+  bool operator>(const HoldemHand& hand) const;
+  bool operator>=(const HoldemHand& hand) const;
   bool operator==(const HoldemHand& hand) const;
   bool operator!=(const HoldemHand& hand) const;
 
